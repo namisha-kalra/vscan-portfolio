@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vscan Alliance — Social Media Handling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0E1B2E;
+    --surface: #14243B;
+    --surface-2: #1B2E48;
+    --line: #2A3F5C;
+    --text: #F5F7FA;
+    --muted: #9FB1C7;
+    --teal: #4C86F5;
+    --violet: #E8A33D;
+    --amber: #E8A33D;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    overflow-x:hidden;
+  }
+  ::selection{ background:var(--teal); color:#0D1117; }
+  a{color:inherit; text-decoration:none;}
+
+  .mono{ font-family:'IBM Plex Mono', monospace; letter-spacing:0.04em; }
+  h1,h2,h3{ font-family:'Playfair Display', serif; letter-spacing:-0.01em; font-weight:700; }
+  .accent{ font-style:italic; color:var(--amber) !important; }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:22px 6vw;
+    background:rgba(13,17,23,0.75);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .logo{ font-size:1.15rem; font-weight:700; display:flex; align-items:center; gap:10px;}
+  .logo-dot{ width:9px; height:9px; border-radius:50%; background:var(--teal); box-shadow:0 0 12px var(--teal); animation: pulse 2s infinite;}
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  nav .links{ display:flex; gap:32px; font-size:0.9rem; color:var(--muted);}
+  nav .links a:hover{ color:var(--teal); }
+  .nav-cta{
+    padding:9px 18px; border:1px solid var(--teal); border-radius:6px;
+    color:var(--teal) !important; font-size:0.85rem; font-weight:500;
+  }
+  @media(max-width:720px){ nav .links{display:none;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:0 6vw;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:44px 44px;
+    background-position:center;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background:radial-gradient(ellipse 60% 50% at 50% 40%, rgba(13,17,23,0) 0%, var(--bg) 85%);
+  }
+  .scanline{
+    position:absolute; left:0; right:0; height:140px;
+    background:linear-gradient(180deg, transparent 0%, rgba(45,212,191,0.10) 45%, rgba(45,212,191,0.35) 50%, rgba(45,212,191,0.10) 55%, transparent 100%);
+    top:-140px;
+    animation: sweep 6s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes sweep{ 0%{ top:-140px; } 100%{ top:100%; } }
+
+  .hero-inner{ position:relative; z-index:2; max-width:900px; }
+  .hero-grid{ max-width:1180px; display:grid; grid-template-columns:1.05fr 0.85fr; gap:50px; align-items:center; }
+  @media(max-width:900px){ .hero-grid{ grid-template-columns:1fr; } .hero-visual{ order:-1; margin-bottom:20px; } }
+
+  /* phone mockup */
+  .hero-visual{ position:relative; display:flex; justify-content:center; }
+  .phone{
+    width:270px; border:9px solid #0A1526; border-radius:34px;
+    background:var(--surface); box-shadow:0 40px 80px rgba(0,0,0,0.55), 0 0 0 1px var(--line);
+    position:relative;
+  }
+  .phone-notch{ width:70px; height:16px; background:#0A1526; border-radius:0 0 12px 12px; margin:0 auto 8px; }
+  .phone-screen{ padding:0 14px 16px; }
+  .post-header{ display:flex; align-items:center; gap:10px; padding:6px 0 12px; }
+  .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--teal), var(--violet)); flex-shrink:0; }
+  .uname{ font-size:0.8rem; font-weight:600; }
+  .uloc{ font-size:0.62rem; color:var(--muted); }
+  .dots{ margin-left:auto; color:var(--muted); font-size:0.8rem; }
+  .post-media{
+    aspect-ratio:1/1; border-radius:10px; margin-bottom:10px;
+    background:linear-gradient(145deg, var(--surface-2), var(--bg));
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--line);
+  }
+  .post-actions{ display:flex; align-items:center; gap:14px; padding:2px 0 8px; }
+  .post-likes{ font-size:0.72rem; font-weight:600; margin-bottom:4px; }
+  .post-caption{ font-size:0.72rem; color:var(--muted); line-height:1.5; }
+  .post-caption b{ color:var(--text); }
+  .tag-line{ color:var(--teal); margin-top:2px; }
+
+  .badge{
+    position:absolute; background:var(--surface); border:1px solid var(--line);
+    border-radius:10px; padding:9px 14px; font-size:0.85rem; font-weight:600;
+    box-shadow:0 12px 30px rgba(0,0,0,0.4); z-index:3;
+    animation: float 4s ease-in-out infinite;
+  }
+  .badge span{ display:block; font-size:0.6rem; font-weight:400; color:var(--muted); margin-top:2px; }
+  .badge-1{ top:6%; left:-8%; color:var(--violet); }
+  .badge-2{ bottom:10%; right:-10%; color:var(--teal); animation-delay:1.4s; }
+  @keyframes float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+  @media(max-width:520px){ .badge-1{ left:0; } .badge-2{ right:0; } }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:0.78rem; color:var(--teal); margin-bottom:22px;
+    border:1px solid rgba(45,212,191,0.35); padding:6px 12px; border-radius:20px;
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 6vw, 4.6rem);
+    line-height:1.05; font-weight:700;
+  }
+  .hero h1 .accent{ color:var(--teal); }
+  .hero p.sub{
+    margin-top:24px; max-width:560px; color:var(--muted); font-size:1.05rem; line-height:1.6;
+  }
+  .hero-ctas{ margin-top:38px; display:flex; gap:16px; flex-wrap:wrap; }
+  .btn-primary{
+    background:var(--teal); color:#0E1B2E; font-weight:600; padding:14px 26px;
+    border-radius:8px; font-size:0.95rem; display:inline-flex; align-items:center; gap:8px;
+    transition:transform 0.15s ease;
+  }
+  .btn-primary:hover{ transform:translateY(-2px); }
+  .btn-ghost{
+    border:1px solid var(--line); padding:14px 26px; border-radius:8px; font-size:0.95rem; color:var(--text);
+    transition:border-color 0.15s ease;
+  }
+  .btn-ghost:hover{ border-color:var(--muted); }
+
+  .hero-tags{
+    margin-top:56px; display:flex; gap:28px; flex-wrap:wrap;
+    font-size:0.78rem; color:var(--muted);
+  }
+  .hero-tags span{ display:flex; align-items:center; gap:8px; }
+  .hero-tags i{ width:6px; height:6px; background:var(--violet); border-radius:50%; }
+
+  /* ---------- SECTION SHELL ---------- */
+  section{ padding:110px 6vw; }
+  .section-head{ max-width:640px; margin-bottom:56px; }
+  .section-label{ color:var(--teal); font-size:0.8rem; margin-bottom:14px; display:block; }
+  .section-head h2{ font-size:clamp(1.8rem, 3.4vw, 2.6rem); font-weight:600; }
+  .section-head p{ color:var(--muted); margin-top:16px; line-height:1.6; }
+
+  /* ---------- SERVICES ---------- */
+  .services{ background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .service-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden; }
+  .service-card{ background:var(--surface); padding:32px 26px; position:relative; }
+  .s-icon{ width:40px; height:40px; border-radius:10px; background:var(--surface-2); display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .service-card .tag{ color:var(--muted); font-size:0.72rem; }
+  .service-card h3{ margin-top:14px; font-size:1.15rem; font-weight:600; }
+  .service-card p{ margin-top:10px; color:var(--muted); font-size:0.9rem; line-height:1.55; }
+  .service-card:hover{ background:var(--surface-2); }
+
+  /* ---------- PORTFOLIO ---------- */
+  .portfolio-tabs{ display:flex; gap:10px; margin-bottom:34px; flex-wrap:wrap; }
+  .tab{
+    padding:9px 18px; border:1px solid var(--line); border-radius:20px; font-size:0.82rem; color:var(--muted); cursor:pointer;
+    transition:all 0.15s ease;
+  }
+  .tab.active, .tab:hover{ border-color:var(--teal); color:var(--teal); }
+  .portfolio-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:18px; }
+  .p-tile{
+    aspect-ratio:4/5; border-radius:12px; border:1px solid var(--line);
+    background:linear-gradient(135deg, var(--surface-2), var(--surface));
+    display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
+    position:relative; overflow:hidden;
+  }
+  .p-tile::before{
+    content:attr(data-kind); position:absolute; top:14px; left:16px;
+    font-family:'IBM Plex Mono',monospace; font-size:0.68rem; color:var(--muted);
+  }
+  .p-tile .glow{ position:absolute; width:160px; height:160px; border-radius:50%; filter:blur(50px); opacity:0.35; }
+  .p-tile .platform{
+    position:absolute; top:14px; right:14px; width:22px; height:22px; border-radius:6px;
+    display:flex; align-items:center; justify-content:center; background:var(--surface); border:1px solid var(--line);
+    z-index:1;
+  }
+  .p-tile .stats{ display:flex; gap:12px; margin-top:6px; position:relative; z-index:1; }
+  .p-tile .stats span{ display:flex; align-items:center; gap:4px; font-size:0.68rem; color:var(--muted); }
+  .p-tile h4{ font-size:0.95rem; position:relative; z-index:1; }
+  .p-tile span{ font-size:0.75rem; color:var(--muted); position:relative; z-index:1; }
+
+  .portfolio-note{
+    margin-top:30px; padding:16px 20px; border:1px dashed var(--line); border-radius:10px;
+    font-size:0.85rem; color:var(--muted); line-height:1.6;
+  }
+  .portfolio-note b{ color:var(--text); }
+
+  /* ---------- PROCESS ---------- */
+  .process-list{ display:flex; flex-direction:column; }
+  .process-row{
+    display:grid; grid-template-columns:70px 1fr; gap:20px;
+    padding:26px 0; border-bottom:1px solid var(--line);
+  }
+  .process-row:first-child{ border-top:1px solid var(--line); }
+  .process-row .num{ font-family:'IBM Plex Mono',monospace; color:var(--violet); font-size:0.95rem; }
+  .process-row h3{ font-size:1.1rem; font-weight:600; }
+  .process-row p{ color:var(--muted); font-size:0.9rem; margin-top:6px; max-width:560px; line-height:1.55;}
+
+  /* ---------- CONTACT ---------- */
+  .contact-wrap{ display:grid; grid-template-columns:1fr 1fr; gap:60px; }
+  @media(max-width:860px){ .contact-wrap{ grid-template-columns:1fr; } }
+  .contact-info .item{ margin-bottom:26px; }
+  .contact-info .item .k{ color:var(--muted); font-size:0.78rem; margin-bottom:6px; }
+  .contact-info .item .v{ font-size:1.05rem; font-weight:500; }
+  .contact-info .item .v a:hover{ color:var(--teal); }
+
+  form{ display:flex; flex-direction:column; gap:16px; }
+  .field label{ display:block; font-size:0.8rem; color:var(--muted); margin-bottom:8px; }
+  .field input, .field select, .field textarea{
+    width:100%; background:var(--surface); border:1px solid var(--line); border-radius:8px;
+    padding:12px 14px; color:var(--text); font-family:'Inter',sans-serif; font-size:0.92rem;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color:var(--teal); }
+  .field textarea{ resize:vertical; min-height:90px; }
+  .submit-btn{
+    background:var(--teal); color:#0E1B2E; font-weight:600; padding:14px; border:none; border-radius:8px;
+    font-size:0.95rem; cursor:pointer; margin-top:6px;
+  }
+  .submit-btn:hover{ filter:brightness(1.08); }
+
+  footer{
+    padding:36px 6vw; border-top:1px solid var(--line); display:flex; justify-content:space-between;
+    color:var(--muted); font-size:0.8rem; flex-wrap:wrap; gap:12px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="logo-dot"></span>VSCAN ALLIANCE</div>
+  <div class="links">
+    <a href="#services">Services</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#process">Process</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <a href="#contact" class="nav-cta">Get in touch</a>
+</nav>
+
+<section class="hero">
+  <div class="scanline"></div>
+  <div class="hero-inner hero-grid">
+    <div class="hero-text">
+    <div class="eyebrow mono">
+      <span style="display:inline-flex; flex-direction:column; width:3px; height:14px; border-radius:2px; overflow:hidden;">
+        <span style="flex:1; background:#FF9933;"></span><span style="flex:1; background:#FFFFFF;"></span><span style="flex:1; background:#138808;"></span>
+      </span>
+      TAKING NEW CLIENTS · SOCIAL MEDIA DIVISION
+    </div>
+    <h1>We scan the noise.<br>You get the <span class="accent">signal.</span></h1>
+    <p class="sub">Vscan Alliance runs full social media handling for brands that don't have time to babysit an algorithm — content, growth, ads and reporting, managed end to end.</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn-primary">Start a project →</a>
+      <a href="#portfolio" class="btn-ghost">View our work</a>
+    </div>
+    <div class="hero-tags mono">
+      <span><i></i> CONTENT & DESIGN</span>
+      <span><i></i> GROWTH & ADS</span>
+      <span><i></i> FULL ACCOUNT HANDLING</span>
+      <span><i></i> REPORTING</span>
+    </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="badge badge-1 mono">↑ 12.4K <span>followers/mo</span></div>
+      <div class="badge badge-2 mono">4.8% <span>engagement</span></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="post-header">
+            <div class="avatar"></div>
+            <div>
+              <div class="uname">yourbrand</div>
+              <div class="uloc mono">Sponsored by Vscan</div>
+            </div>
+            <div class="dots">•••</div>
+          </div>
+          <div class="post-media">
+            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="var(--muted)" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+          <div class="post-actions">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--violet)"><path d="M12 21s-6.7-4.35-9.3-8.1C.8 10.1 1.6 6.3 5 5c2-.8 4 .1 5 1.8C11 5.1 13 4.2 15 5c3.4 1.3 4.2 5.1 2.3 7.9C18.7 16.65 12 21 12 21z"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--text)" stroke-width="1.6"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H6l-3 2 .7-3.5A8.5 8.5 0 1 1 21 11.5z"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--text)" stroke-width="1.6"><path d="M4 4l16 8-16 8V4z"/></svg>
+            <div style="flex:1"></div>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--text)" stroke-width="1.6"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>
+          </div>
+          <div class="post-likes mono">2,481 likes</div>
+          <div class="post-caption"><b>yourbrand</b> new drop is live — link in bio ✨</div>
+          <div class="post-caption tag-line mono">#growth #socialmedia #brand</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services" class="services">
+
+  <div class="section-head">
+    <span class="section-label mono">// SERVICES</span>
+    <h2>One team, the whole feed.</h2>
+    <p>We don't hand you off between departments — one Vscan pod owns your account from brief to analytics.</p>
+  </div>
+  <div class="service-grid">
+    <div class="service-card">
+      <div class="s-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--teal)" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg></div>
+      <span class="tag mono">01 · CONTENT</span>
+      <h3>Content & Design</h3>
+      <p>Reels, carousels, graphics and photo/video edits, planned on a content calendar and shipped on schedule.</p>
+    </div>
+    <div class="service-card">
+      <div class="s-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--violet)" stroke-width="1.6"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5H6l-3 2 .7-3.5A8.5 8.5 0 1 1 21 11.5z"/></svg></div>
+      <span class="tag mono">02 · GROWTH</span>
+      <h3>Growth & Community</h3>
+      <p>Daily posting, engagement, DMs and comment management to keep the account active and responsive.</p>
+    </div>
+    <div class="service-card">
+      <div class="s-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--teal)" stroke-width="1.6"><path d="M3 11l18-7-7 18-2-8-9-3z"/></svg></div>
+      <span class="tag mono">03 · ADS</span>
+      <h3>Paid Ads & Targeting</h3>
+      <p>Campaign setup, audience targeting and budget management across Meta and Instagram ad platforms.</p>
+    </div>
+    <div class="service-card">
+      <div class="s-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--violet)" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></div>
+      <span class="tag mono">04 · REPORT</span>
+      <h3>Analytics & Reporting</h3>
+      <p>Monthly performance reports so you always know what's working — no guesswork, no vanity metrics.</p>
+    </div>
+  </div>
+</section>
+
+<section id="portfolio">
+  <div class="section-head">
+    <span class="section-label mono">// PORTFOLIO</span>
+    <h2>A sample of recent work.</h2>
+    <p>Swap these tiles for your own Graphics, Photos and Videos — drop image links in and each tile becomes a live thumbnail.</p>
+  </div>
+  <div class="portfolio-tabs mono">
+    <div class="tab active">All</div>
+    <div class="tab">Graphics</div>
+    <div class="tab">Photos</div>
+    <div class="tab">Videos</div>
+  </div>
+  <div class="portfolio-grid">
+    <div class="p-tile" data-kind="GRAPHIC"><div class="glow" style="background:var(--teal); top:-40px; right:-40px;"></div><div class="platform">📷</div><h4>Brand post set</h4><span>Instagram carousel</span><div class="stats mono"><span>♥ 3.2K</span><span>💬 148</span></div></div>
+    <div class="p-tile" data-kind="PHOTO"><div class="glow" style="background:var(--violet); bottom:-40px; left:-40px;"></div><div class="platform">📷</div><h4>Product shoot</h4><span>Feed photography</span><div class="stats mono"><span>♥ 1.8K</span><span>💬 62</span></div></div>
+    <div class="p-tile" data-kind="VIDEO"><div class="glow" style="background:var(--amber); top:-30px; left:-30px;"></div><div class="platform">▶</div><h4>Reel edit</h4><span>Short-form video</span><div class="stats mono"><span>▶ 42K</span><span>♥ 5.1K</span></div></div>
+    <div class="p-tile" data-kind="GRAPHIC"><div class="glow" style="background:var(--violet); top:40%; right:-40px;"></div><div class="platform">📷</div><h4>Launch campaign</h4><span>Story series</span><div class="stats mono"><span>👁 9.4K</span><span>💬 90</span></div></div>
+    <div class="p-tile" data-kind="PHOTO"><div class="glow" style="background:var(--teal); bottom:-30px; right:-20px;"></div><div class="platform">📷</div><h4>Lifestyle set</h4><span>On-location photos</span><div class="stats mono"><span>♥ 2.4K</span><span>💬 71</span></div></div>
+    <div class="p-tile" data-kind="VIDEO"><div class="glow" style="background:var(--amber); top:-30px; right:-30px;"></div><div class="platform">▶</div><h4>Client testimonial</h4><span>Video edit</span><div class="stats mono"><span>▶ 18K</span><span>♥ 2.9K</span></div></div>
+  </div>
+  <div class="portfolio-note">
+    <b>Tip:</b> Upload your Graphics/Photos/Videos to Drive, get "Anyone with the link" sharing on each file, then replace a tile's background with <span class="mono">background: url('YOUR_IMAGE_LINK') center/cover;</span>
+  </div>
+</section>
+
+<section id="process" class="services" style="border-top:1px solid var(--line);">
+  <div class="section-head">
+    <span class="section-label mono">// HOW IT WORKS</span>
+    <h2>From first message to live feed.</h2>
+  </div>
+  <div class="process-list">
+    <div class="process-row"><div class="num">01</div><div><h3>You send us a brief</h3><p>Tell us your brand, goals and current handles via the form below or WhatsApp.</p></div></div>
+    <div class="process-row"><div class="num">02</div><div><h3>We build the plan</h3><p>A content + growth plan tailored to your niche, shared for approval before anything goes live.</p></div></div>
+    <div class="process-row"><div class="num">03</div><div><h3>We handle the account</h3><p>Content, posting, engagement and ads run on schedule — you just approve and review.</p></div></div>
+    <div class="process-row"><div class="num">04</div><div><h3>You get monthly reports</h3><p>Clear numbers on reach, growth and engagement, with next month's plan already in motion.</p></div></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="section-head">
+    <span class="section-label mono">// CONTACT</span>
+    <h2>Let's handle your feed.</h2>
+    <p>Fill the form and it'll open a pre-filled WhatsApp message straight to us — or reach out directly below.</p>
+  </div>
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <div class="item">
+        <div class="k mono">WHATSAPP</div>
+        <div class="v"><a href="https://wa.me/91XXXXXXXXXX" target="_blank">+91 XXXXX XXXXX</a></div>
+      </div>
+      <div class="item">
+        <div class="k mono">EMAIL</div>
+        <div class="v"><a href="mailto:hello@vscanalliance.com">hello@vscanalliance.com</a></div>
+      </div>
+      <div class="item">
+        <div class="k mono">INSTAGRAM</div>
+        <div class="v"><a href="https://instagram.com/vscanalliance" target="_blank">@vscanalliance</a></div>
+      </div>
+    </div>
+    <form id="leadForm">
+      <div class="field">
+        <label>Your name</label>
+        <input type="text" id="f-name" required placeholder="Full name">
+      </div>
+      <div class="field">
+        <label>Phone or email</label>
+        <input type="text" id="f-contact" required placeholder="How we reach you">
+      </div>
+      <div class="field">
+        <label>Service needed</label>
+        <select id="f-service">
+          <option>Full social media handling</option>
+          <option>Content & Design only</option>
+          <option>Growth & Community only</option>
+          <option>Paid Ads & Targeting</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tell us about your brand</label>
+        <textarea id="f-message" placeholder="Business name, current handles, what you need help with..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send via WhatsApp →</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 Vscan Alliance. All rights reserved.</div>
+  <div class="mono">BUILT FOR SOCIAL MEDIA HANDLING</div>
+</footer>
+
+<script>
+  document.getElementById('leadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('f-name').value;
+    const contact = document.getElementById('f-contact').value;
+    const service = document.getElementById('f-service').value;
+    const message = document.getElementById('f-message').value;
+    const text = `Hi Vscan Alliance, I'm ${name} (${contact}). I'm interested in: ${service}. ${message}`;
+    const url = `https://wa.me/91XXXXXXXXXX?text=${encodeURIComponent(text)}`;
+    window.open(url, '_blank');
+  });
+
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
