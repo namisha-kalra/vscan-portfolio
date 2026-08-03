@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photos — Vscan Alliance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="logo-dot"></span>VSCAN ALLIANCE</div>
+  <div class="links">
+    <a href="index.html">Home</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="index.html#contact">Contact</a>
+  </div>
+  <a href="index.html#contact" class="nav-cta">Get in touch</a>
+</nav>
+
+<section class="page-header">
+  <a href="portfolio.html" class="back-link mono">← Back to Portfolio</a>
+  <h1>Photos</h1>
+  <p>On-location shoots, product photography and lifestyle sets from client work.</p>
+</section>
+
+<section style="padding-top:50px;">
+  <div class="portfolio-grid" id="portfolioGrid"></div>
+</section>
+
+<div id="lightbox" class="lightbox">
+  <div class="lightbox-close" id="lightboxClose">✕</div>
+  <div class="lightbox-inner" id="lightboxInner"></div>
+</div>
+
+<footer>
+  <div>© 2026 Vscan Alliance. All rights reserved.</div>
+  <div class="mono">BUILT FOR SOCIAL MEDIA HANDLING</div>
+</footer>
+
+<script src="gallery.js"></script>
+<script>
+  // Add your photos here once uploaded, e.g.:
+  // { type:"photo", src:"photos/photo1.jpg", title:"Product shoot", desc:"Feed photography", stats:"♥ 1.8K · 💬 62" },
+  const items = [];
+  initLightbox();
+  renderGallery(items);
+</script>
+
+</body>
+</html>
